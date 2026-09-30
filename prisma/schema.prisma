@@ -43,25 +43,114 @@ model Outlet {
   alamat    String?
   telepon   String?
   createdAt DateTime @default(now())
-
+  stocks Stock[]
   @@index([tenantId])
 }
 
 model Product {
-  id        String   @id @default(cuid())
-  tenantId  String
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  nama      String
-  sku       String?
-  barcode   String?
-  hargaJual Int
-  hargaBeli Int?
-  satuan    String   @default("pcs")
-  stokMin   Int      @default(0)
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId String?
+  nama       String
+  sku        String?
+  barcode    String?
+  hargaJual  Int
+  hargaBeli  Int?
+  satuan     String   @default("pcs")
+  stokMin    Int      @default(0)
+  gambar     String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  stocks           Stock[]
+  transactionItems TransactionItem[]
 
   @@unique([tenantId, sku])
+  @@index([tenantId, barcode])
   @@index([tenantId, nama])
+}
+
+model Stock {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  outletId  String
+  outlet    Outlet   @relation(fields: [outletId], references: [id], onDelete: Cascade)
+  qty       Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, outletId])
+}
+
+model StockMovement {
+  id        String   @id @default(cuid())
+  productId String
+  outletId  String
+  tipe      String
+  qty       Int
+  stokAwal  Int
+  stokAkhir Int
+  catatan   String?
+  referensi String?
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@index([productId, createdAt])
+  @@index([outletId, createdAt])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  tenantId    String
+  outletId    String
+  kasirId     String
+  shiftId     String?
+  nomor       String   @unique
+  subtotal    Int
+  diskon      Int      @default(0)
+  pajak       Int      @default(0)
+  total       Int
+  metodeBayar String
+  bayar       Int
+  kembalian   Int      @default(0)
+  status      String   @default("paid")
+  catatan     String?
+  createdAt   DateTime @default(now())
+
+  items TransactionItem[]
+
+  @@index([tenantId, createdAt])
+  @@index([outletId, createdAt])
+}
+
+model TransactionItem {
+  id            String      @id @default(cuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product     @relation(fields: [productId], references: [id])
+  namaProduk    String
+  qty           Int
+  harga         Int
+  diskon        Int         @default(0)
+  subtotal      Int
+
+  @@index([transactionId])
+}
+
+model Shift {
+  id          String    @id @default(cuid())
+  outletId    String
+  kasirId     String
+  saldoAwal   Int
+  saldoSistem Int?
+  saldoAkhir  Int?
+  selisih     Int?
+  catatan     String?
+  bukaAt      DateTime  @default(now())
+  tutupAt     DateTime?
+
+  @@index([outletId, bukaAt])
 }
