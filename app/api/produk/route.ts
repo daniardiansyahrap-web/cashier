@@ -56,8 +56,16 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(produk, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Produk error:", error);
+
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        { error: "SKU sudah dipakai. Pakai SKU lain." },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Terjadi kesalahan server" },
       { status: 500 }
