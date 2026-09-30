@@ -28,16 +28,19 @@ export function DashboardShell({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top bar (mobile) */}
-      <header className="lg:hidden bg-white border-b sticky top-0 z-30 flex items-center justify-between px-4 py-3">
+      <header className="hide-desktop bg-white border-b sticky top-0 z-30 flex items-center justify-between px-4 py-3">
         <button
           onClick={() => setOpen(true)}
           className="p-2 rounded-md hover:bg-gray-100"
           aria-label="Buka menu"
         >
-          <Menu className="w-6 h-6" />
+          <Menu className="w-7 h-7" />
         </button>
-        <div className="font-bold">Cashier</div>
-        <div className="w-10" />
+        <img
+          src="/logo-cashier.png"
+          alt="Cashier"
+          className="h-14 object-contain"
+        />
       </header>
 
       <div className="flex">
@@ -51,20 +54,26 @@ export function DashboardShell({
 
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-white border-r flex flex-col transition-transform duration-200 ${
-            open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-          }`}
+          className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-white border-r flex flex-col transition-transform duration-200 ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+            }`}
         >
           {/* Header sidebar */}
-          <div className="p-6 border-b flex justify-between items-start">
-            <div>
-              <h1 className="text-xl font-bold">Cashier</h1>
-              <p className="text-xs text-gray-500 mt-1">{userName}</p>
-              <p className="text-xs text-gray-400">{userRole}</p>
+          <div className="p-4 border-b flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo-cashier.png"
+                alt="Cashier"
+                className="w-16 h-16 object-contain"
+              />
+              <div>
+                <h1 className="text-lg font-bold">Cashier</h1>
+                <p className="text-xs text-gray-500">{userName}</p>
+                <p className="text-xs text-gray-400">{userRole}</p>
+              </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="lg:hidden p-1 rounded hover:bg-gray-100"
+              className="hide-desktop p-1 rounded hover:bg-gray-100"
               aria-label="Tutup menu"
             >
               <X className="w-5 h-5" />
