@@ -114,65 +114,51 @@ export default function StokPage() {
 
     return (
         <div className="p-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-4">
                 <div>
-                    <h1 className="text-3xl font-bold">Manajemen Stok</h1>
-                    <p className="text-gray-500 text-sm mt-1">
+                    <h1 className="text-2xl md:text-3xl font-bold">Manajemen Stok</h1>
+                    <p className="text-gray-500 text-xs md:text-sm mt-1">
                         Outlet: {outlet || "-"}
                     </p>
                 </div>
                 <Link href="/stok/riwayat">
-                    <Button variant="outline">Lihat Riwayat Pergerakan</Button>
+                    <Button variant="outline" size="sm" className="w-full md:w-auto">
+                        Lihat Riwayat Pergerakan
+                    </Button>
                 </Link>
             </div>
 
-            {/* Ringkasan */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm text-gray-500 font-normal">
-                            Total Produk
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{produk.length}</div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm text-gray-500 font-normal">
-                            Stok Rendah
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-red-600">
-                            {totalStokRendah}
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm text-gray-500 font-normal">
-                            Total Nilai Stok
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">
-                            {produk.reduce((sum, p) => sum + Math.max(p.stok, 0), 0)} unit
-                        </div>
-                    </CardContent>
-                </Card>
+            {/* Ringkasan — 1 baris compact */}
+            <div className="bg-white border rounded-lg p-3 mb-4 flex items-center">
+                <div className="flex-1 text-center">
+                    <div className="text-[10px] md:text-xs text-gray-500">Total Produk</div>
+                    <div className="text-lg md:text-xl font-bold">{produk.length}</div>
+                </div>
+                <div className="w-px h-8 bg-gray-200" />
+                <div className="flex-1 text-center">
+                    <div className="text-[10px] md:text-xs text-gray-500">Stok Rendah</div>
+                    <div className="text-lg md:text-xl font-bold text-red-600">
+                        {totalStokRendah}
+                    </div>
+                </div>
+                <div className="w-px h-8 bg-gray-200" />
+                <div className="flex-1 text-center">
+                    <div className="text-[10px] md:text-xs text-gray-500">Total Unit</div>
+                    <div className="text-lg md:text-xl font-bold">
+                        {produk.reduce((sum, p) => sum + Math.max(p.stok, 0), 0)}
+                    </div>
+                </div>
             </div>
 
             <Card>
                 <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <CardTitle>Daftar Stok Produk</CardTitle>
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+                        <CardTitle className="text-base md:text-lg">Daftar Stok Produk</CardTitle>
                         <Input
-                            placeholder="Cari produk..."
+                            placeholder="Cari produk"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="max-w-xs"
+                            className="w-full md:max-w-xs"
                         />
                     </div>
                 </CardHeader>
@@ -187,12 +173,10 @@ export default function StokPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Nama</TableHead>
-                                    <TableHead>SKU</TableHead>
-                                    <TableHead className="text-right">Stok</TableHead>
-                                    <TableHead className="text-right">Min</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Aksi</TableHead>
+                                    <TableHead className="text-xs md:text-sm">Nama</TableHead>
+                                    <TableHead className="text-xs md:text-sm text-right">Stok</TableHead>
+                                    <TableHead className="text-xs md:text-sm">Status</TableHead>
+                                    <TableHead className="text-xs md:text-sm text-right">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -200,47 +184,50 @@ export default function StokPage() {
                                     const isLow = p.stok <= p.stokMin;
                                     return (
                                         <TableRow key={p.id}>
-                                            <TableCell className="font-medium">{p.nama}</TableCell>
-                                            <TableCell className="text-sm">{p.sku || "-"}</TableCell>
-                                            <TableCell className="text-right font-bold">
-                                                {p.stok} {p.satuan}
+                                            <TableCell className="font-medium text-xs md:text-sm">
+                                                <div>{p.nama}</div>
+                                                <div className="text-[10px] md:text-xs text-gray-500">
+                                                    {p.sku || "-"}
+                                                </div>
                                             </TableCell>
-                                            <TableCell className="text-right text-sm text-gray-500">
-                                                {p.stokMin}
+                                            <TableCell className="text-right font-bold text-xs md:text-sm">
+                                                {p.stok} <span className="text-[10px] md:text-xs font-normal">{p.satuan}</span>
                                             </TableCell>
                                             <TableCell>
                                                 {isLow ? (
-                                                    <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
-                                                        Stok Rendah
+                                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-xs font-medium bg-red-100 text-red-800">
+                                                        Rendah
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] md:text-xs font-medium bg-green-100 text-green-800">
                                                         Aman
                                                     </span>
                                                 )}
                                             </TableCell>
-                                            <TableCell className="text-right space-x-1">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => openForm(p, "in")}
-                                                >
-                                                    + Masuk
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => openForm(p, "out")}
-                                                >
-                                                    − Keluar
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => openForm(p, "opname")}
-                                                >
-                                                    Opname
-                                                </Button>
+                                            <TableCell className="text-right">
+                                                <div className="flex gap-1 justify-end">
+                                                    <button
+                                                        onClick={() => openForm(p, "in")}
+                                                        className="w-7 h-7 rounded border text-green-600 hover:bg-green-50 text-sm font-bold"
+                                                        title="Stok Masuk"
+                                                    >
+                                                        +
+                                                    </button>
+                                                    <button
+                                                        onClick={() => openForm(p, "out")}
+                                                        className="w-7 h-7 rounded border text-red-600 hover:bg-red-50 text-sm font-bold"
+                                                        title="Stok Keluar"
+                                                    >
+                                                        −
+                                                    </button>
+                                                    <button
+                                                        onClick={() => openForm(p, "opname")}
+                                                        className="w-7 h-7 rounded border text-gray-600 hover:bg-gray-50 text-[10px] font-bold"
+                                                        title="Opname"
+                                                    >
+                                                        =
+                                                    </button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     );

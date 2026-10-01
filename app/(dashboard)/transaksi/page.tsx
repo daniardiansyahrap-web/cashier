@@ -111,76 +111,59 @@ export default function TransaksiPage() {
 
   return (
     <div className="p-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Riwayat Transaksi</h1>
-        <p className="text-gray-500 text-sm mt-1">
+      <div className="mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Riwayat Transaksi</h1>
+        <p className="text-gray-500 text-xs md:text-sm mt-1">
           Daftar semua transaksi yang pernah terjadi
         </p>
       </div>
 
-      {/* Ringkasan */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500 font-normal">
-              Total Transaksi
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{transaksi.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500 font-normal">
-              Penjualan Hari Ini
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {formatRupiah(totalHariIni)}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500 font-normal">
-              Item Terjual Hari Ini
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {transaksi
-                .filter((t) => {
-                  const today = new Date().toDateString();
-                  const tgl = new Date(t.createdAt).toDateString();
-                  return today === tgl;
-                })
-                .reduce(
-                  (sum, t) =>
-                    sum + t.items.reduce((s, item) => s + item.qty, 0),
-                  0
-                )}
-            </div>
-          </CardContent>
-        </Card>
+      {/* Ringkasan — 1 baris compact */}
+      <div className="bg-white border rounded-lg p-3 mb-4 flex items-center">
+        <div className="flex-1 text-center">
+          <div className="text-[10px] md:text-xs text-gray-500">Total Transaksi</div>
+          <div className="text-lg md:text-xl font-bold">{transaksi.length}</div>
+        </div>
+        <div className="w-px h-8 bg-gray-200" />
+        <div className="flex-1 text-center">
+          <div className="text-[10px] md:text-xs text-gray-500">Penjualan Hari Ini</div>
+          <div className="text-lg md:text-xl font-bold text-blue-600">
+            {formatRupiah(totalHariIni)}
+          </div>
+        </div>
+        <div className="w-px h-8 bg-gray-200" />
+        <div className="flex-1 text-center">
+          <div className="text-[10px] md:text-xs text-gray-500">Item Terjual</div>
+          <div className="text-lg md:text-xl font-bold">
+            {transaksi
+              .filter((t) => {
+                const today = new Date().toDateString();
+                const tgl = new Date(t.createdAt).toDateString();
+                return today === tgl;
+              })
+              .reduce(
+                (sum, t) => sum + t.items.reduce((s, item) => s + item.qty, 0),
+                0
+              )}
+          </div>
+        </div>
       </div>
 
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>Daftar Transaksi</CardTitle>
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+            <CardTitle className="text-base md:text-lg">Daftar Transaksi</CardTitle>
             <Input
-              placeholder="Cari nomor transaksi..."
+              placeholder="Cari no transaksi"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="max-w-xs"
+              className="w-full md:max-w-xs"
             />
           </div>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8 text-gray-500">Memuat...</div>
+            <div className="text-center py-8 text-gray-500">Memuat</div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               {search
