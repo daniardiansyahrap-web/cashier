@@ -16,6 +16,7 @@ type Produk = {
     id: string;
     nama: string;
     sku: string | null;
+    barcode: string | null;
     hargaJual: number;
     satuan: string;
 };
@@ -37,6 +38,8 @@ export default function KasirPage() {
     const [metodeBayar, setMetodeBayar] = useState("cash");
     const [nominalBayar, setNominalBayar] = useState("");
     const [saving, setSaving] = useState(false);
+    const [barcode, setBarcode] = useState("");
+    const [barcodeMsg, setBarcodeMsg] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
     async function fetchProduk() {
         setLoading(true);
@@ -68,6 +71,37 @@ export default function KasirPage() {
                 },
             ];
         });
+    }
+
+    function handleBarcodeSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        const code = barcode.trim();
+        if (!code) return;
+
+        // Cari produk berdasarkan barcode atau SKU
+        const found = produk.find(
+            (p) =>
+                p.barcode?.toLowerCase() === code.toLowerCase() ||
+                p.sku?.toLowerCase() === code.toLowerCase()
+        );
+
+        if (found) {
+            addToCart(found);
+            setBarcodeMsg({
+                text: `✓ ${found.nama} ditambahkan`,
+                type: "success",
+            });
+            setBarcode("");
+            // Auto-hide message setelah 2 detik
+            setTimeout(() => setBarcodeMsg(null), 2000);
+        } else {
+            setBarcodeMsg({
+                text: `✗ Barcode "${code}" tidak ditemukan`,
+                type: "error",
+            });
+            setBarcode("");
+            setTimeout(() => setBarcodeMsg(null), 2500);
+        }
     }
 
     function updateQty(productId: string, qty: number) {
@@ -156,10 +190,40 @@ export default function KasirPage() {
         <div className="flex h-full relative">
             {/* Kolom kiri: Grid Produk */}
             <div className="flex-1 p-4 lg:p-6 overflow-auto">
-                <div className="mb-4">
-                    <h1 className="text-xl lg:text-2xl font-bold mb-3">Kasir</h1>
+                <div className="mb-4 space-y-3">
+                    <h1 className="text-xl lg:text-2xl font-bold">Kasir</h1>
+
+                    {/* Input Barcode — auto focus */}
+                    <form onSubmit={handleBarcodeSubmit} className="max-w-md">
+                        <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                📷
+                            </div>
+                            <Input
+                                placeholder="Scan barcode / ketik manual..."
+                                value={barcode}
+                                onChange={(e) => setBarcode(e.target.value)}
+                                className="pl-9 text-base"
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Pesan feedback */}
+                        {barcodeMsg && (
+                            <div
+                                className={`mt-2 text-sm px-3 py-2 rounded-lg ${barcodeMsg.type === "success"
+                                        ? "bg-green-50 text-green-700"
+                                        : "bg-red-50 text-red-700"
+                                    }`}
+                            >
+                                {barcodeMsg.text}
+                            </div>
+                        )}
+                    </form>
+
+                    {/* Input Search Biasa */}
                     <Input
-                        placeholder="Cari produk (nama / SKU)"
+                        placeholder="Cari produk (nama / SKU)..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="max-w-md"
