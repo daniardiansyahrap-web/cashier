@@ -298,7 +298,7 @@ export const jenisUsaha = [
   {
     id: "warung",
     nama: "Warung / Kelontong",
-    emoji: "🏪",
+    emoji: "",
     manfaat:
       "Catat penjualan cepat, gak perlu buku nota. Stok gampang dicek dari HP.",
     fiturAndalan: "POS + Barcode",
@@ -306,7 +306,7 @@ export const jenisUsaha = [
   {
     id: "minimarket",
     nama: "Minimarket",
-    emoji: "🛒",
+    emoji: "",
     manfaat:
       "Kelola ratusan produk dengan barcode. Laporan harian otomatis, gak perlu rekap manual.",
     fiturAndalan: "Barcode + Laporan",
@@ -314,7 +314,7 @@ export const jenisUsaha = [
   {
     id: "kafe",
     nama: "Kafe / Resto",
-    emoji: "☕",
+    emoji: "",
     manfaat:
       "Kasir cepat untuk jam sibuk. Pantau menu terlaris dari HP.",
     fiturAndalan: "POS + Laporan",
@@ -322,7 +322,7 @@ export const jenisUsaha = [
   {
     id: "bangunan",
     nama: "Toko Bangunan",
-    emoji: "🔨",
+    emoji: "",
     manfaat:
       "Kelola stok banyak item. Transfer antar gudang & cabang.",
     fiturAndalan: "Multi-Outlet + Stok",
@@ -330,7 +330,7 @@ export const jenisUsaha = [
   {
     id: "apotek",
     nama: "Apotek",
-    emoji: "💊",
+    emoji: "",
     manfaat:
       "Catat stok & tanggal expired. Laporan penjualan per produk.",
     fiturAndalan: "Stok + Laporan",
@@ -338,7 +338,7 @@ export const jenisUsaha = [
   {
     id: "multi",
     nama: "Toko Multi-Cabang",
-    emoji: "🏢",
+    emoji: "",
     manfaat:
       "Satu dashboard untuk semua cabang. Bandingkan performa outlet.",
     fiturAndalan: "Multi-Outlet",
