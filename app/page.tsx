@@ -11,32 +11,41 @@ import { RoiCalculator } from "@/components/landing/RoiCalculator";
 import { KenapaKami } from "@/components/landing/KenapaKami";
 import { Pricing } from "@/components/landing/Pricing";
 import { Faq } from "@/components/landing/Faq";
+import { FinalCta } from "@/components/landing/FinalCta";
+import { Footer } from "@/components/landing/Footer";
+import { WhatsAppFloat } from "@/components/landing/WhatsAppFloat";
+import { ScrollTop } from "@/components/landing/ScrollTop";
+import { StickyCta } from "@/components/landing/StickyCta";
 import { StatStrip } from "@/components/landing/StatStrip";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <Hero />
-      <StatStrip />
-      <SocialProof />
-      <BentoFeatures />
-      <FeatureTabs />
-      <ScrollStory />
-      <BeforeAfter />
-      <FiturIndonesia />
-      <JenisUsaha />
-      <RoiCalculator />
-      <KenapaKami />
-      <Pricing />
-      <Faq />
 
-      {/* Batch 5: CTA + Footer + Global */}
-      <section className="py-20 px-4 text-center text-slate-500 bg-slate-50">
-        <p className="text-sm">
-          ⏳ Batch 5: CTA Akhir + Footer + WhatsApp Floating + Scroll Top
-        </p>
-      </section>
+      <main>
+        <Hero />
+        <StatStrip />
+        <SocialProof />
+        <BentoFeatures />
+        <FeatureTabs />
+        <ScrollStory />
+        <BeforeAfter />
+        <FiturIndonesia />
+        <JenisUsaha />
+        <RoiCalculator />
+        <KenapaKami />
+        <Pricing />
+        <Faq />
+        <FinalCta />
+      </main>
+
+      <Footer />
+
+      {/* Global elements */}
+      <WhatsAppFloat />
+      <ScrollTop />
+      <StickyCta />
     </div>
   );
-}
+} 

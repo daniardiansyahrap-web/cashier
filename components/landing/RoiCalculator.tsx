@@ -57,10 +57,7 @@ export function RoiCalculator() {
       <div className="relative max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-pulse" />
-            Kalkulator Hemat
-          </div>
+          
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">
             Berapa waktu yang bisa{" "}
             <span className="text-accent-400">kamu selamatkan?</span>

@@ -33,8 +33,7 @@ export function Hero() {
             transition={{ duration: 0.6 }}
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 bg-accent-400 rounded-full animate-pulse" />
+            <div className="inline-flex items-center bg-white/10 backdrop-blur border border-white/20 rounded-full px-4 py-1.5 mb-6">
               <span className="text-xs md:text-sm font-medium">
                 Gratis 14 hari · Tanpa kartu kredit
               </span>

@@ -32,10 +32,7 @@ export function BentoFeatures() {
       <div className="max-w-7xl mx-auto relative">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest shadow-sm">
-            <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-pulse" />
-            Fitur
-          </div>
+         
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
             Satu aplikasi untuk{" "}
             <span className="text-accent-500">seluruh toko kamu</span>
