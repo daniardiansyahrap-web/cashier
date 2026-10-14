@@ -11,7 +11,7 @@ export function FiturIndonesia() {
         <div className="text-center mb-16">
           
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
-            Dibuat untuk <span className="text-accent-500">UMKM Indonesia</span>
+            Dibuat untuk UMKM indonesia
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
             Fitur yang kamu butuh untuk jualan di Indonesia — dari QRIS sampai

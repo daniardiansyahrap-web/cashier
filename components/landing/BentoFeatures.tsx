@@ -1,262 +1,294 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { PosMockup } from "./mockups/PosMockup";
-import {
-  ShoppingCart,
-  ScanBarcode,
-  BarChart3,
-  Store,
-  Package,
-  Warehouse,
-  Receipt,
-  ArrowRight,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
-export function BentoFeatures() {
+/* ------------------------------------------------------------------ */
+/*  Pengaturan cepat                                                   */
+/* ------------------------------------------------------------------ */
+const STORE_NAME = "Hakim Mart"; // nama toko di kepala layar HP
+const INTERVAL = 6500; // ms, jeda pergantian otomatis
+
+/* ------------------------------------------------------------------ */
+/*  Tipe data                                                          */
+/* ------------------------------------------------------------------ */
+type Row = { l: string; r: string; warn?: boolean };
+type Screen = {
+  title: string;
+  big: string;
+  cap: string;
+  rows: Row[];
+  btn: string;
+};
+type Feature = { name: string; desc: string; screen: Screen };
+
+/* ------------------------------------------------------------------ */
+/*  Data fitur → isi layar HP                                          */
+/* ------------------------------------------------------------------ */
+const FEATURES: Feature[] = [
+  {
+    name: "Kasir Cepat",
+    desc: "Transaksi kurang dari 10 detik. Scan, hitung otomatis, langsung bayar.",
+    screen: {
+      title: "Kasir",
+      big: "Rp 12.000",
+      cap: "Total transaksi",
+      rows: [
+        { l: "Indomie Goreng 2×", r: "7.000" },
+        { l: "Teh Botol Sosro 1×", r: "5.000" },
+        { l: "Tunai", r: "20.000" },
+        { l: "Kembali", r: "8.000" },
+      ],
+      btn: "Bayar",
+    },
+  },
+  {
+    name: "Manajemen Produk",
+    desc: "Kategori, harga jual dan beli. Atur dengan mudah.",
+    screen: {
+      title: "Produk",
+      big: "124",
+      cap: "produk tersimpan",
+      rows: [
+        { l: "Indomie Goreng", r: "2.700 → 3.500" },
+        { l: "Teh Botol Sosro", r: "3.800 → 5.000" },
+        { l: "Kopi Kapal Api", r: "1.900 → 2.500" },
+        { l: "Roti Tawar", r: "11.500 → 15.000" },
+      ],
+      btn: "+ Tambah produk",
+    },
+  },
+  {
+    name: "Manajemen Stok",
+    desc: "Stok masuk dan keluar, opname, serta penanda stok menipis.",
+    screen: {
+      title: "Stok",
+      big: "2",
+      cap: "produk hampir habis",
+      rows: [
+        { l: "Indomie Goreng", r: "sisa 3", warn: true },
+        { l: "Kopi Kapal Api", r: "sisa 8", warn: true },
+        { l: "Teh Botol Sosro", r: "sisa 45" },
+        { l: "Roti Tawar", r: "sisa 22" },
+      ],
+      btn: "Mulai opname",
+    },
+  },
+  {
+    name: "Laporan Usaha",
+    desc: "Penjualan, produk terlaris, per metode bayar. Export CSV.",
+    screen: {
+      title: "Laporan",
+      big: "Rp 3.420.000",
+      cap: "penjualan hari ini",
+      rows: [
+        { l: "Transaksi", r: "86" },
+        { l: "Terlaris", r: "Indomie Goreng" },
+        { l: "Rata-rata", r: "Rp 39.800" },
+      ],
+      btn: "Export CSV",
+    },
+  },
+  {
+    name: "Multi-Outlet",
+    desc: "Banyak cabang dalam satu akun. Transfer stok antar outlet.",
+    screen: {
+      title: "Outlet",
+      big: "3",
+      cap: "cabang dalam satu akun",
+      rows: [
+        { l: "Pusat", r: "Rp 1,9 jt" },
+        { l: "Timur", r: "Rp 0,9 jt" },
+        { l: "Barat", r: "Rp 0,6 jt" },
+      ],
+      btn: "Transfer stok",
+    },
+  },
+  {
+    name: "Barcode Scanner",
+    desc: "Pakai kamera HP atau scanner USB. Langsung masuk keranjang.",
+    screen: {
+      title: "Scan",
+      big: "Indomie Goreng",
+      cap: "terbaca dari barcode 8991234500012",
+      rows: [
+        { l: "Harga", r: "3.500" },
+        { l: "Stok", r: "3", warn: true },
+        { l: "Status", r: "Masuk keranjang" },
+      ],
+      btn: "Scan lagi",
+    },
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  PhoneScreen — bingkai HP + isi layar sesuai fitur                  */
+/* ------------------------------------------------------------------ */
+function bigSize(t: string) {
+  if (t.length <= 8) return "text-[34px]";
+  if (t.length <= 12) return "text-[28px]";
+  return "text-[24px]";
+}
+
+function PhoneScreen({ s }: { s: Screen }) {
   return (
-    <section
-      id="fitur"
-      className="relative py-20 md:py-28 px-4 bg-gradient-to-b from-white via-slate-50 to-white"
-    >
-      {/* Background dots */}
-      <div
-        className="absolute inset-0 opacity-[0.3]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #cbd5e1 0.5px, transparent 0.5px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
+    <div className="mx-auto w-[264px] rounded-[36px] border-[1.5px] border-stone-900 bg-white p-3 shadow-[0_26px_40px_-30px_rgba(15,23,42,0.45)]">
+      <div className="flex min-h-[420px] flex-col rounded-[26px] bg-stone-100 px-4 pb-[18px] pt-4">
+        <div className="mb-3.5 flex justify-between font-mono text-[11px] font-medium text-stone-500">
+          <span>14.32</span>
+          <span>{STORE_NAME}</span>
+        </div>
 
-      <div className="max-w-7xl mx-auto relative">
-        {/* Header */}
-        <div className="text-center mb-16">
-         
-          <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
-            Satu aplikasi untuk{" "}
-            <span className="text-accent-500">seluruh toko kamu</span>
+        <div className="text-[15px] font-bold text-stone-900">{s.title}</div>
+        <div
+          className={`mt-3 break-words font-extrabold leading-[1.1] tracking-[-0.04em] text-stone-900 ${bigSize(
+            s.big
+          )}`}
+        >
+          {s.big}
+        </div>
+        <div className="mb-3.5 mt-0.5 text-[12.5px] text-stone-500">
+          {s.cap}
+        </div>
+
+        <div>
+          {s.rows.map((r) => (
+            <div
+              key={r.l}
+              className="flex justify-between gap-2 border-t border-stone-200 py-[9px] text-[13px]"
+            >
+              <span className="text-stone-600">{r.l}</span>
+              <span
+                className={`font-mono tabular-nums ${
+                  r.warn ? "text-orange-700" : "text-stone-900"
+                }`}
+              >
+                {r.r}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-auto pt-5">
+          <div
+            aria-hidden
+            className="rounded-xl bg-brand-600 py-[11px] text-center text-[13.5px] font-semibold text-white"
+          >
+            {s.btn}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Komponen utama                                                     */
+/* ------------------------------------------------------------------ */
+export function BentoFeatures() {
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [manual, setManual] = useState(false);
+
+  // Ganti fitur otomatis sampai pengunjung berinteraksi
+  useEffect(() => {
+    if (manual || reduce) return;
+    const id = setInterval(
+      () => setActive((a) => (a + 1) % FEATURES.length),
+      INTERVAL
+    );
+    return () => clearInterval(id);
+  }, [manual, reduce]);
+
+  const pick = (i: number) => {
+    setManual(true);
+    setActive(i);
+  };
+
+  const f = FEATURES[active];
+  const auto = !manual && !reduce;
+
+  return (
+    <section id="fitur" className="px-4 py-20 md:py-28">
+      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_400px] lg:gap-20">
+        {/* ---------- Kiri: judul + daftar fitur (TIDAK DIUBAH) ---------- */}
+        <div>
+          <h2 className="font-display max-w-[16ch] text-3xl font-bold leading-[1.12] tracking-tight text-stone-900 md:text-4xl">
+            Satu aplikasi untuk seluruh toko kamu
           </h2>
-          <p className="text-slate-600 max-w-2xl mx-auto">
+          <p className="mt-3 max-w-[38ch] text-stone-500">
             Dari kasir sampai laporan, semuanya terintegrasi.
+          </p>
+
+          <ul className="mt-9 border-t border-stone-300">
+            {FEATURES.map((it, i) => {
+              const on = i === active;
+              return (
+                <li key={it.name} className="border-b border-stone-300">
+                  <button
+                    type="button"
+                    onClick={() => pick(i)}
+                    onMouseEnter={() => pick(i)}
+                    aria-current={on}
+                    className={`relative grid w-full grid-cols-[20px_1fr] items-baseline gap-x-1 py-4 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${
+                      on
+                        ? "text-stone-900"
+                        : "text-stone-500 hover:text-stone-900"
+                    }`}
+                  >
+                    <span
+                      aria-hidden
+                      className={`size-1.5 translate-y-[-2px] rounded-full transition-colors ${
+                        on ? "bg-brand-600" : "bg-stone-300"
+                      }`}
+                    />
+                    <span className="text-base font-semibold">{it.name}</span>
+
+                    <span
+                      className={`col-start-2 grid text-sm text-stone-500 transition-[grid-template-rows,opacity] duration-300 ${
+                        on
+                          ? "grid-rows-[1fr] opacity-100"
+                          : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <span className="overflow-hidden">{it.desc}</span>
+                    </span>
+
+                    {/* garis progres penanda pergantian otomatis */}
+                    {on && auto && (
+                      <motion.span
+                        key={active}
+                        aria-hidden
+                        className="absolute -bottom-px left-0 h-px bg-brand-600"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{
+                          duration: INTERVAL / 1000,
+                          ease: "linear",
+                        }}
+                      />
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <p className="mt-4 text-sm text-stone-500">
+            Cetak struk thermal: segera hadir.
           </p>
         </div>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4 md:gap-5">
-          {/* KARTU BESAR: POS */}
+        {/* ---------- Kanan: layar HP ---------- */}
+        <div className="mx-auto w-full max-w-md">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="md:col-span-6 lg:col-span-7 bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/40 overflow-hidden group hover:shadow-2xl transition-all duration-500"
+            key={active}
+            initial={reduce ? false : { opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            aria-live="polite"
           >
-            <div className="p-6 md:p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <div className="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <ShoppingCart className="w-6 h-6" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="font-display text-2xl font-bold mb-2 text-slate-900">
-                    Kasir Cepat (POS)
-                  </h3>
-                  <p className="text-slate-600 text-sm max-w-md">
-                    Transaksi &lt; 10 detik. Scan barcode langsung masuk
-                    keranjang, hitung otomatis, langsung bayar.
-                  </p>
-                </div>
-              </div>
-            </div>
-            {/* Mockup POS preview */}
-            <div className="mx-6 mb-6 md:mx-8 md:mb-8 rounded-2xl border border-slate-100 overflow-hidden bg-slate-50 aspect-[16/9]">
-              <PosMockup />
-            </div>
-          </motion.div>
-
-          {/* KARTU SEDANG: Barcode */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="md:col-span-3 lg:col-span-5 bg-gradient-to-br from-slate-900 to-brand-900 rounded-3xl border border-slate-800 shadow-lg overflow-hidden relative group hover:shadow-2xl transition-all duration-500 text-white p-6 md:p-8"
-          >
-            <div className="relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <ScanBarcode className="w-6 h-6" strokeWidth={2.5} />
-              </div>
-              <h3 className="font-display text-2xl font-bold mb-2">
-                Barcode Scanner
-              </h3>
-              <p className="text-slate-300 text-sm mb-6 max-w-sm">
-                Scan pakai kamera HP atau scanner USB. Produk otomatis masuk
-                keranjang.
-              </p>
-
-              {/* Animasi scan */}
-              <div className="relative h-24 rounded-xl bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center">
-                <div className="flex items-end gap-1 opacity-40">
-                  {[3, 7, 2, 8, 4, 6, 2, 7, 3, 5, 8, 2, 6, 4, 7, 3, 5].map(
-                    (h, i) => (
-                      <div
-                        key={i}
-                        className="w-1 bg-white rounded"
-                        style={{ height: `${h * 3}px` }}
-                      />
-                    )
-                  )}
-                </div>
-                <motion.div
-                  className="absolute left-0 right-0 h-0.5 bg-accent-400 shadow-lg shadow-accent-400/50"
-                  animate={{ top: ["10%", "90%", "10%"] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* KARTU SEDANG: Laporan */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-3 lg:col-span-4 bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/40 p-6 md:p-8 group hover:shadow-2xl transition-all duration-500"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <BarChart3 className="w-6 h-6" strokeWidth={2.5} />
-            </div>
-            <h3 className="font-display text-2xl font-bold mb-2 text-slate-900">
-              Laporan Lengkap
-            </h3>
-            <p className="text-slate-600 text-sm mb-6">
-              Penjualan, produk terlaris, per metode bayar. Export CSV.
-            </p>
-
-            {/* Mini chart */}
-            <div className="flex items-end gap-1 h-20 mb-4">
-              {[40, 65, 30, 80, 55, 90, 70].map((h, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${h}%` }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + i * 0.05 }}
-                  className="flex-1 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t"
-                />
-              ))}
-            </div>
-            <button className="text-xs font-semibold text-cyan-600 flex items-center gap-1 hover:gap-2 transition-all">
-              Export CSV <ArrowRight className="w-3 h-3" />
-            </button>
-          </motion.div>
-
-          {/* KARTU KECIL: Multi-Outlet */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="md:col-span-2 lg:col-span-4 bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/40 p-6 group hover:shadow-2xl transition-all duration-500"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Store className="w-6 h-6" strokeWidth={2.5} />
-            </div>
-            <h3 className="font-display text-xl font-bold mb-2 text-slate-900">
-              Multi-Outlet
-            </h3>
-            <p className="text-slate-600 text-sm mb-4">
-              Kelola banyak cabang. Transfer stok antar outlet.
-            </p>
-
-            {/* Mini outlets */}
-            <div className="space-y-1.5">
-              {[
-                { nama: "Cabang Pusat", stok: "Aman", color: "green" },
-                { nama: "Cabang Timur", stok: "Aman", color: "green" },
-                { nama: "Cabang Barat", stok: "Menipis", color: "orange" },
-              ].map((c) => (
-                <div
-                  key={c.nama}
-                  className="flex items-center justify-between text-xs bg-slate-50 rounded-lg px-3 py-2"
-                >
-                  <span className="font-medium text-slate-700">{c.nama}</span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                      c.color === "green"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-orange-100 text-orange-700"
-                    }`}
-                  >
-                    {c.stok}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* KARTU KECIL: Stok */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="md:col-span-2 lg:col-span-4 bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/40 p-6 group hover:shadow-2xl transition-all duration-500"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Warehouse className="w-6 h-6" strokeWidth={2.5} />
-            </div>
-            <h3 className="font-display text-xl font-bold mb-2 text-slate-900">
-              Manajemen Stok
-            </h3>
-            <p className="text-slate-600 text-sm mb-4">
-              Stok masuk, keluar, opname. Highlight stok menipis.
-            </p>
-
-            {/* Mini stok list */}
-            <div className="space-y-1.5">
-              {[
-                { nama: "Indomie Goreng", qty: 3, low: true },
-                { nama: "Teh Botol", qty: 45, low: false },
-                { nama: "Kopi Kapal", qty: 8, low: true },
-              ].map((p) => (
-                <div
-                  key={p.nama}
-                  className="flex items-center justify-between text-xs bg-slate-50 rounded-lg px-3 py-2"
-                >
-                  <span className="font-medium text-slate-700">{p.nama}</span>
-                  <span
-                    className={`font-bold ${
-                      p.low ? "text-orange-600" : "text-slate-600"
-                    }`}
-                  >
-                    {p.qty}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* KARTU KECIL: Cetak Struk (Segera Hadir) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="md:col-span-6 lg:col-span-12 bg-white rounded-3xl border border-dashed border-slate-200 p-6 md:p-8 group hover:border-orange-300 transition-all duration-500 relative"
-          >
-            <div className="absolute top-4 right-4 bg-orange-50 text-orange-600 text-[10px] font-bold px-2 py-1 rounded-full">
-              SEGERA HADIR
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-              <Receipt className="w-6 h-6" strokeWidth={2.5} />
-            </div>
-            <h3 className="font-display text-xl font-bold mb-2 text-slate-900">
-              Cetak Struk Thermal
-            </h3>
-            <p className="text-slate-600 text-sm">
-              Print struk ke printer thermal Bluetooth. Sedang dikembangkan.
-            </p>
+            <PhoneScreen s={f.screen} />
           </motion.div>
         </div>
       </div>

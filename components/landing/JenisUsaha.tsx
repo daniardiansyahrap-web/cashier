@@ -16,7 +16,7 @@ export function JenisUsaha() {
         <div className="text-center mb-12">
         
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
-            Cocok untuk <span className="text-brand-700">semua jenis toko</span>
+            Cocok untuk semua jenis toko
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
             Pilih jenis usaha kamu, lihat bagaimana Cashier membantu.

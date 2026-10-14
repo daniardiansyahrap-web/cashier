@@ -36,10 +36,7 @@ export function Faq() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest shadow-sm">
-            <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-pulse" />
-            FAQ
-          </div>
+          
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
             Pertanyaan yang sering ditanya
           </h2>

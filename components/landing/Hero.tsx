@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Play, Check, TrendingUp } from "lucide-react";
 import { PosMockup } from "./mockups/PosMockup";
 import { ReceiptMockup } from "./mockups/ReceiptMockup";
+import { HeroHeadline } from "./HeroHeadline";
 
 export function Hero() {
   return (
@@ -32,24 +33,10 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center bg-white/10 backdrop-blur border border-white/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="text-xs md:text-sm font-medium">
-                Gratis 14 hari · Tanpa kartu kredit
-              </span>
-            </div>
+            
 
-            {/* Headline */}
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6">
-              Tutup toko,{" "}
-              <span className="relative inline-block">
-                <span className="relative z-10 text-accent-400">
-                  omzet hari ini sudah rapi
-                </span>
-                <span className="absolute bottom-1 left-0 right-0 h-3 bg-accent-500/20 -z-0" />
-              </span>{" "}
-              di HP kamu.
-            </h1>
+            {/* Headline — Orbit Style */}
+            <HeroHeadline as="h1" />
 
             {/* Sub */}
             <p className="text-base md:text-lg text-slate-300 leading-relaxed mb-8 max-w-lg">
@@ -84,15 +71,15 @@ export function Hero() {
             {/* Trust line */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs md:text-sm text-slate-400">
               <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-accent-400" />
+                
                 Tanpa kartu kredit
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-accent-400" />
+                
                 Setup 5 menit
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-accent-400" />
+                
                 Bisa dari HP
               </span>
             </div>

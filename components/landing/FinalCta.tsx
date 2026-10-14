@@ -101,15 +101,15 @@ export function FinalCta() {
 
               <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm text-slate-600">
                 <span className="flex items-center gap-1.5">
-                  <span className="text-green-600 font-bold">✓</span> Tanpa
+                  <span className="text-green-600 font-bold"></span> Tanpa
                   kartu kredit
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="text-green-600 font-bold">✓</span> Setup 5
+                  <span className="text-green-600 font-bold"></span> Setup 5
                   menit
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="text-green-600 font-bold">✓</span> Batalkan
+                  <span className="text-green-600 font-bold"></span> Batalkan
                   kapan saja
                 </span>
               </div>

@@ -62,7 +62,7 @@ export function FeatureTabs() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
-            Lihat Cashier <span className="text-brand-700">beraksi</span>
+            Lihat Cashier beraksi
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
             Klik tab di bawah untuk lihat bagaimana Cashier bekerja untuk

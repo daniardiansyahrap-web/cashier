@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 @theme {
   /* Brand Colors */
   --color-brand-50: #eff6ff;
@@ -8,7 +9,8 @@
   --color-brand-400: #60a5fa;
   --color-brand-500: #3b82f6;
   --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;   /* Primary brand */
+  --color-brand-700: #1d4ed8;
+  /* Primary brand */
   --color-brand-800: #1e40af;
   --color-brand-900: #1e3a8a;
   --color-brand-950: #172554;
@@ -19,15 +21,41 @@
   --color-accent-200: #fed7aa;
   --color-accent-300: #fdba74;
   --color-accent-400: #fb923c;
-  --color-accent-500: #f97316;  /* Accent utama */
+  --color-accent-500: #f97316;
+  /* Accent utama */
   --color-accent-600: #ea580c;
   --color-accent-700: #c2410c;
   --color-accent-800: #9a3412;
   --color-accent-900: #7c2d12;
 
-  /* Font */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
-  --font-display: var(--font-jakarta), ui-sans-serif, system-ui;
+    /* CX Design Tokens (untuk app dashboard) */
+  --color-cx-navy: #0b1230;
+  --color-cx-navy-2: #16204f;
+  --color-cx-orange: #f97316;
+  --color-cx-orange-d: #ea580c;
+  --color-cx-blue: #1d4ed8;
+  --color-cx-bg: #f5f7fb;
+  --color-cx-line: #e6eaf2;
+  --color-cx-muted: #64748b;
+  --color-cx-ok: #15803d;
+
+  /* Shadow */
+  --shadow-cx-card: 0 16px 34px -20px rgba(11, 18, 48, 0.5);
+  --shadow-cx-fab: 0 12px 20px -8px rgba(234, 88, 12, 0.8);
+
+    /* Font */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .bg-cx-hero {
+    background: linear-gradient(180deg, #0b1230, #16204f);
+  }
+
+  .bg-cx-cta {
+    background: linear-gradient(180deg, #f97316, #ea580c);
+  }
 }
 
 @import "tw-animate-css";
@@ -152,9 +180,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
@@ -194,4 +224,55 @@
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+@layer base {
+  body,
+  p,
+  span,
+  div,
+  a,
+  li {
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer base {
+  body,
+  p,
+  span,
+  div,
+  a,
+  li,
+  button,
+  input,
+  textarea,
+  select {
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
+
+  /* Semua angka pakai tabular-nums */
+  [data-num],
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
 }

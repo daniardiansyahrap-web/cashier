@@ -63,7 +63,7 @@ export function ScrollStory() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-slate-900">
-            Satu transaksi, <span className="text-brand-700">semuanya otomatis</span>
+            Satu transaksi,semua beres
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
             Lihat bagaimana setiap transaksi di Cashier mengalir dari kasir

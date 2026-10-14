@@ -1,7 +1,8 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { DashboardShell } from "@/components/dashboard/shell";
+import { prisma } from "@/lib/prisma";
+import { AppShell } from "@/components/app/AppShell";
 
 export default async function DashboardLayout({
   children,
@@ -14,12 +15,19 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  const tenantId = (session.user as any).tenantId;
+  const outlet = await prisma.outlet.findFirst({
+    where: { tenantId },
+    select: { nama: true },
+  });
+
   return (
-    <DashboardShell
+    <AppShell
       userName={session.user?.name || ""}
       userRole={(session.user as any).role || "kasir"}
+      outletName={outlet?.nama || "Outlet Utama"}
     >
       {children}
-    </DashboardShell>
+    </AppShell>
   );
 }
