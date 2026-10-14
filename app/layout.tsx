@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Kelola toko lebih mudah: POS cepat, stok akurat, laporan lengkap. Coba gratis 14 hari tanpa kartu kredit.",
   icons: {
-    icon: "/logo-cashier.png",
+    icon: "/logo-full-dark.png",
   },
   openGraph: {
     title: "Cashier — Aplikasi Kasir Modern untuk UMKM Indonesia",
