@@ -276,3 +276,12 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+}

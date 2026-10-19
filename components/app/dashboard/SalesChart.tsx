@@ -20,27 +20,29 @@ export function SalesChart({ data }: { data: Day[] }) {
         </span>
       </div>
 
-      <div className="flex items-end gap-2.5 h-32 lg:h-[141px] mt-auto">
+      <div className="flex items-stretch gap-2.5 h-32 lg:h-[141px] mt-auto">
         {data.map((d, i) => {
           const height = isEmpty ? 30 + Math.random() * 40 : (d.total / max) * 100;
           return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-2">
-              <motion.div
-                initial={{ height: 0 }}
-                whileInView={{ height: `${Math.max(height, 8)}%` }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: reduce ? 0 : 0.5,
-                  delay: reduce ? 0 : i * 0.08,
-                  ease: "easeOut",
-                }}
-                className={`w-full rounded-t-md ${
-                  d.isToday && !isEmpty
-                    ? "bg-cx-orange"
-                    : "bg-[#dbe5fb]"
-                }`}
-                style={{ minHeight: "8px" }}
-              />
+            <div key={i} className="flex-1 min-w-0 h-full flex flex-col items-center gap-2">
+              <div className="flex-1 min-h-0 w-full flex items-end">
+                <motion.div
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${Math.max(height, 8)}%` }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: reduce ? 0 : 0.5,
+                    delay: reduce ? 0 : i * 0.08,
+                    ease: "easeOut",
+                  }}
+                  className={`w-full rounded-t-md ${
+                    d.isToday && !isEmpty
+                      ? "bg-cx-orange"
+                      : "bg-[#dbe5fb]"
+                  }`}
+                  style={{ minHeight: "8px" }}
+                />
+              </div>
               <span
                 className={`text-[10px] font-semibold ${
                   d.isToday && !isEmpty
