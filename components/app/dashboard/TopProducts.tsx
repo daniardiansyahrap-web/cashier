@@ -15,7 +15,11 @@ export function TopProducts({ products }: { products: Product[] }) {
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-center gap-3">
-              <span className="shrink-0 size-7 rounded-lg grid place-items-center text-[12px] font-extrabold bg-[#fff0e3] text-cx-orange-d">
+              <span
+                className={`shrink-0 size-7 grid place-items-center text-[12px] font-extrabold ${
+                  i === 1 ? "text-cx-orange-d" : "text-cx-blue"
+                }`}
+              >
                 {i}
               </span>
               <div className="flex-1 space-y-1.5">
@@ -33,10 +37,10 @@ export function TopProducts({ products }: { products: Product[] }) {
           {products.map((p, i) => (
             <div key={i} className="flex items-center gap-3">
               <span
-                className={`shrink-0 size-7 lg:size-6 rounded-lg grid place-items-center text-[12px] font-extrabold ${
+                className={`shrink-0 size-7 lg:size-6 grid place-items-center text-[12px] font-extrabold ${
                   i === 0
-                    ? "bg-[#fff0e3] text-cx-orange-d"
-                    : "bg-[#e8eefc] text-cx-blue"
+                    ? "text-cx-orange-d"
+                    : "text-cx-blue"
                 }`}
               >
                 {i + 1}

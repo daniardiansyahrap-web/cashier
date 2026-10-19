@@ -3,22 +3,21 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { OmzetCard } from "@/components/app/dashboard/OmzetCard";
-import { AksiCepat } from "@/components/app/dashboard/AksiCepat";
 import { ShortcutGrid } from "@/components/app/dashboard/ShortcutGrid";
 import { SalesChart } from "@/components/app/dashboard/SalesChart";
 import { TopProducts } from "@/components/app/dashboard/TopProducts";
 import { RecentTransactions } from "@/components/app/dashboard/RecentTransactions";
+import { OmzetCardDesktop } from "@/components/app/desktop/OmzetCardDesktop";
+import { AksiCepatDesktop } from "@/components/app/desktop/AksiCepatDesktop";
+import { SalesChartDesktop } from "@/components/app/desktop/SalesChartDesktop";
 
 async function getDashboardData(tenantId: string) {
   const now = new Date();
-  const startOfToday = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startOfYesterday = new Date(startOfToday);
   startOfYesterday.setDate(startOfYesterday.getDate() - 1);
 
+  // Transaksi hari ini
   const transaksiHariIni = await prisma.transaction.findMany({
     where: { tenantId, createdAt: { gte: startOfToday }, status: "paid" },
     include: { items: true },
@@ -31,6 +30,7 @@ async function getDashboardData(tenantId: string) {
     0
   );
 
+  // Transaksi kemarin
   const transaksiKemarin = await prisma.transaction.findMany({
     where: {
       tenantId,
@@ -40,6 +40,7 @@ async function getDashboardData(tenantId: string) {
   });
   const omzetKemarin = transaksiKemarin.reduce((sum, t) => sum + t.total, 0);
 
+  // Stok rendah
   const outlet = await prisma.outlet.findFirst({ where: { tenantId } });
   let stokRendah = 0;
   if (outlet) {
@@ -52,29 +53,42 @@ async function getDashboardData(tenantId: string) {
     ).length;
   }
 
-  const startOf7Days = new Date(startOfToday);
-  startOf7Days.setDate(startOf7Days.getDate() - 6);
-  const transaksi7Hari = await prisma.transaction.findMany({
-    where: { tenantId, createdAt: { gte: startOf7Days }, status: "paid" },
+  // Transaksi 30 Hari Terakhir (untuk Grafik)
+  const startOf30Days = new Date(startOfToday);
+  startOf30Days.setDate(startOf30Days.getDate() - 29);
+  
+  const transaksi30Hari = await prisma.transaction.findMany({
+    where: { tenantId, createdAt: { gte: startOf30Days }, status: "paid" },
     select: { createdAt: true, total: true },
   });
 
   const hariLabels = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-  const penjualan7Hari: { label: string; total: number; isToday: boolean }[] = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(startOf7Days);
-    d.setDate(d.getDate() + i);
-    const dateStr = d.toISOString().slice(0, 10);
-    const total = transaksi7Hari
-      .filter((t) => t.createdAt.toISOString().slice(0, 10) === dateStr)
-      .reduce((sum, t) => sum + t.total, 0);
-    penjualan7Hari.push({
-      label: hariLabels[d.getDay()],
-      total,
-      isToday: i === 6,
-    });
-  }
+  
+  const generateChartData = (days: number) => {
+    const start = new Date(startOfToday);
+    start.setDate(start.getDate() - (days - 1));
+    const arr = [];
+    for (let i = 0; i < days; i++) {
+      const d = new Date(start);
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toISOString().slice(0, 10);
+      const total = transaksi30Hari
+        .filter((t) => t.createdAt.toISOString().slice(0, 10) === dateStr)
+        .reduce((sum, t) => sum + t.total, 0);
+      
+      arr.push({
+        label: hariLabels[d.getDay()],
+        total,
+        isToday: i === days - 1,
+      });
+    }
+    return arr;
+  };
 
+  const penjualan7Hari = generateChartData(7);
+  const penjualan30Hari = generateChartData(30);
+
+  // Produk terlaris bulan ini
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const itemsBulanIni = await prisma.transactionItem.findMany({
     where: {
@@ -105,10 +119,11 @@ async function getDashboardData(tenantId: string) {
     .sort((a, b) => b.qty - a.qty)
     .slice(0, 5);
 
+  // Transaksi terbaru
   const transaksiTerbaru = await prisma.transaction.findMany({
     where: { tenantId, status: "paid" },
     orderBy: { createdAt: "desc" },
-    take: 20,
+    take: 5,
     include: { items: true },
   });
 
@@ -119,6 +134,7 @@ async function getDashboardData(tenantId: string) {
     itemTerjual,
     stokRendah,
     penjualan7Hari,
+    penjualan30Hari,
     produkTerlaris,
     transaksiTerbaru,
   };
@@ -132,9 +148,9 @@ export default async function DashboardPage() {
   const data = await getDashboardData(tenantId);
 
   return (
-  <div className="max-w-[1240px] mx-auto px-4 lg:px-7 py-4 lg:py-0">
-      {/* MOBILE */}
-      <div className="lg:hidden space-y-6 py-4">
+    <>
+      {/* === MOBILE VIEW (Jangan Diubah) === */}
+      <div className="lg:hidden space-y-4 py-4">
         <OmzetCard
           omzetHariIni={data.omzetHariIni}
           omzetKemarin={data.omzetKemarin}
@@ -148,32 +164,44 @@ export default async function DashboardPage() {
         <RecentTransactions transactions={data.transaksiTerbaru} />
       </div>
 
-      {/* DESKTOP */}
-    <div className="hidden lg:grid grid-cols-12 gap-x-[17px] gap-y-5 -mt-[37px] relative z-10">
-        <div className="col-span-7">
-          <OmzetCard
-            omzetHariIni={data.omzetHariIni}
-            omzetKemarin={data.omzetKemarin}
-            jumlahTransaksi={data.jumlahTransaksi}
-            itemTerjual={data.itemTerjual}
-            stokRendah={data.stokRendah}
-          />
+      {/* === DESKTOP VIEW === */}
+      <div className="hidden lg:grid grid-cols-12 gap-[17px] pb-10">
+        
+        {/* Baris 1: Omzet (8 col) + Aksi Cepat (4 col) */}
+        <div className="col-span-8">
+          <OmzetCardDesktop data={data} />
         </div>
-        <div className="col-span-5">
-          <AksiCepat />
+        <div className="col-span-4">
+          <AksiCepatDesktop />
         </div>
 
-        <div className="col-span-7 h-[265px] min-h-0">
-          <SalesChart data={data.penjualan7Hari} />
+        {/* Baris 2: Grafik (8 col) + Catatan (4 col) */}
+        <div className="col-span-8">
+          <SalesChartDesktop 
+            data7Hari={data.penjualan7Hari} 
+            data30Hari={data.penjualan30Hari} 
+          />
         </div>
-        <div className="col-span-5 h-[265px] min-h-0">
+        <div className="col-span-4">
+          <div className="bg-white rounded-[10px] p-[22px] border border-[#dde1ec] h-full">
+            <div className="text-[13px] font-extrabold text-[#0b1230] mb-2 pb-3 border-b border-[#eceef4]">
+              Catatan hari ini
+            </div>
+            <div className="text-[11px] text-[#757895]">
+              Belum ada catatan.
+            </div>
+          </div>
+        </div>
+
+        {/* Baris 3: Transaksi (8 col) + Produk Terlaris (4 col) */}
+        <div className="col-span-8">
+          <RecentTransactions transactions={data.transaksiTerbaru} />
+        </div>
+        <div className="col-span-4">
           <TopProducts products={data.produkTerlaris} />
         </div>
 
-        <div className="col-span-12">
-          <RecentTransactions transactions={data.transaksiTerbaru} />
-        </div>
       </div>
-    </div>
+    </>
   );
 }

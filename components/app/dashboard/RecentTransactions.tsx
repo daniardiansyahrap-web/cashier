@@ -94,7 +94,7 @@ export function RecentTransactions({ transactions }: { transactions: Trx[] }) {
                     {rupiah(t.total)}
                   </td>
                   <td className="py-1.5 text-[12px]">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#e6f6ec] text-cx-ok">
+                    <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold text-cx-ok">
                       {metodeLabel(t.metodeBayar)}
                     </span>
                   </td>
