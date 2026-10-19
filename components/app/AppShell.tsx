@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
+  Home,
   ShoppingCart,
   Package,
   Layers,
@@ -17,7 +17,7 @@ import { SidebarDesktop } from "./desktop/SidebarDesktop";
 import { HeaderBand } from "./desktop/HeaderBand";
 
 const MENU_ITEMS = [
-  { href: "/dashboard", label: "Beranda", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Beranda", icon: Home },
   { href: "/kasir", label: "Kasir", icon: ShoppingCart },
   { href: "/transaksi", label: "Riwayat", icon: Clock },
   { href: "/produk", label: "Produk", icon: Package },
@@ -26,7 +26,7 @@ const MENU_ITEMS = [
 ];
 
 const BOTTOM_NAV_ITEMS = [
-  { href: "/dashboard", label: "Beranda", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Beranda", icon: Home },
   { href: "/produk", label: "Produk", icon: Package },
   { href: "/kasir", label: "Kasir", icon: ShoppingCart, isFAB: true },
   { href: "/stok", label: "Stok", icon: Layers },
@@ -65,7 +65,7 @@ export function AppShell({
         trialDaysLeft={trialDaysLeft}
       />
 
-      <main className="min-w-0 flex-1 pb-28 lg:pb-8">
+      <main className={`min-w-0 flex-1 pb-28 ${isDashboard ? "lg:pb-0" : "lg:pb-8"}`}>
         {!hasHeader && (
           <header className="lg:hidden bg-cx-hero text-white px-[18px] pt-4 pb-3" />
         )}
@@ -93,11 +93,11 @@ export function AppShell({
         </div>
 
         {/* KONTEN: Full width di mobile, max-w di desktop */}
-        <div
-          className={`w-full lg:mx-auto lg:max-w-[1320px] lg:px-7 ${
-            isDashboard ? "lg:-mt-10 pb-10" : "py-6"
-          } relative z-[1]`}
-        >
+          <div
+            className={`w-full lg:mx-auto lg:max-w-[1320px] lg:px-7 ${
+              isDashboard ? "lg:-mt-10 pb-10 lg:pb-0" : "py-6"
+            } relative z-[1]`}
+          >
           {children}
         </div>
       </main>

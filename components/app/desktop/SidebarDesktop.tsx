@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    LayoutDashboard,
+    Home,
     ShoppingCart,
     Clock,
     Package,
@@ -17,7 +17,7 @@ import {
 import { signOut } from "next-auth/react";
 
 const MENU_ITEMS = [
-    { href: "/dashboard", label: "Beranda", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Beranda", icon: Home },
     { href: "/kasir", label: "Kasir", icon: ShoppingCart, kbd: "F2" },
     { href: "/transaksi", label: "Riwayat", icon: Clock },
     { href: "/produk", label: "Produk", icon: Package },

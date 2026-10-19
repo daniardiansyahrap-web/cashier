@@ -10,6 +10,8 @@ import { RecentTransactions } from "@/components/app/dashboard/RecentTransaction
 import { OmzetCardDesktop } from "@/components/app/desktop/OmzetCardDesktop";
 import { AksiCepatDesktop } from "@/components/app/desktop/AksiCepatDesktop";
 import { SalesChartDesktop } from "@/components/app/desktop/SalesChartDesktop";
+import { RecentTransactionsDesktop } from "@/components/app/desktop/RecentTransactionsDesktop";
+import { TopProductsDesktop } from "@/components/app/desktop/TopProductsDesktop";
 
 async function getDashboardData(tenantId: string) {
   const now = new Date();
@@ -56,14 +58,14 @@ async function getDashboardData(tenantId: string) {
   // Transaksi 30 Hari Terakhir (untuk Grafik)
   const startOf30Days = new Date(startOfToday);
   startOf30Days.setDate(startOf30Days.getDate() - 29);
-  
+
   const transaksi30Hari = await prisma.transaction.findMany({
     where: { tenantId, createdAt: { gte: startOf30Days }, status: "paid" },
     select: { createdAt: true, total: true },
   });
 
   const hariLabels = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-  
+
   const generateChartData = (days: number) => {
     const start = new Date(startOfToday);
     start.setDate(start.getDate() - (days - 1));
@@ -75,7 +77,7 @@ async function getDashboardData(tenantId: string) {
       const total = transaksi30Hari
         .filter((t) => t.createdAt.toISOString().slice(0, 10) === dateStr)
         .reduce((sum, t) => sum + t.total, 0);
-      
+
       arr.push({
         label: hariLabels[d.getDay()],
         total,
@@ -165,8 +167,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* === DESKTOP VIEW === */}
-      <div className="hidden lg:grid grid-cols-12 gap-[17px] pb-10">
-        
+     <div className="hidden lg:grid grid-cols-12 gap-x-[17px] gap-y-[8px] pb-0">
+
         {/* Baris 1: Omzet (8 col) + Aksi Cepat (4 col) */}
         <div className="col-span-8">
           <OmzetCardDesktop data={data} />
@@ -177,9 +179,9 @@ export default async function DashboardPage() {
 
         {/* Baris 2: Grafik (8 col) + Catatan (4 col) */}
         <div className="col-span-8">
-          <SalesChartDesktop 
-            data7Hari={data.penjualan7Hari} 
-            data30Hari={data.penjualan30Hari} 
+          <SalesChartDesktop
+            data7Hari={data.penjualan7Hari}
+            data30Hari={data.penjualan30Hari}
           />
         </div>
         <div className="col-span-4">
@@ -195,10 +197,10 @@ export default async function DashboardPage() {
 
         {/* Baris 3: Transaksi (8 col) + Produk Terlaris (4 col) */}
         <div className="col-span-8">
-          <RecentTransactions transactions={data.transaksiTerbaru} />
+          <RecentTransactionsDesktop transactions={data.transaksiTerbaru} />
         </div>
         <div className="col-span-4">
-          <TopProducts products={data.produkTerlaris} />
+          <TopProductsDesktop products={data.produkTerlaris} />
         </div>
 
       </div>

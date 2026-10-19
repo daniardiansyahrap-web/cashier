@@ -44,7 +44,7 @@ export function OmzetCardDesktop({ data }: { data: any }) {
           : `${data.jumlahTransaksi} transaksi sejauh ini.`}
       </p>
 
-      <div className="mt-auto pt-3.5">
+      <div className="pt-2">
         <div className="grid grid-cols-3 border-t border-[#eceef4] pt-3.5">
           <div className="text-center">
             <div className="text-[11px] text-[#807d95] mb-1">Transaksi</div>
