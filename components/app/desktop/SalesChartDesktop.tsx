@@ -54,7 +54,7 @@ export function SalesChartDesktop({
       {/* Chart Area */}
       <div className="flex gap-2.5 mt-6">
         {/* Y Axis */}
-        <div className="w-[44px] flex flex-col justify-between text-[9.5px] text-[#9aa3b6] text-right pb-[22px]">
+        <div className="w-[44px] flex flex-col justify-between text-[10px] font-medium text-[#64748b] text-right pb-[22px]">
           <span>{max > 0 ? max.toLocaleString("id-ID") : "0"}</span>
           <span>{max > 0 ? (max / 2).toLocaleString("id-ID") : "0"}</span>
           <span>0</span>
@@ -116,10 +116,13 @@ export function SalesChartDesktop({
         ))}
       </div>
       
+            {/* Teks jika grafik kosong */}
       {isEmpty && (
-        <p className="text-[10px] text-[#84819c] mt-3">
-          Kerangka grafik. Batang terisi setelah transaksi pertama.
-        </p>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <span className="text-[11px] font-semibold text-[#9aa3b6] bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
+            Belum ada data penjualan
+          </span>
+        </div>
       )}
     </div>
   );

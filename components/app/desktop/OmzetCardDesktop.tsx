@@ -34,7 +34,7 @@ export function OmzetCardDesktop({ data }: { data: any }) {
         )}
       </div>
 
-      <div className="text-[42px] font-extrabold tracking-[-0.04em] leading-[1.15] mt-0.5 text-[#0b1230]">
+      <div className="text-[36px] font-extrabold tracking-[-0.04em] leading-[1.15] mt-0.5 text-[#0b1230]">
         {rupiah(animatedOmzet)}
       </div>
 

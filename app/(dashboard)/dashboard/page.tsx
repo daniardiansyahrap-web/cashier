@@ -12,6 +12,7 @@ import { AksiCepatDesktop } from "@/components/app/desktop/AksiCepatDesktop";
 import { SalesChartDesktop } from "@/components/app/desktop/SalesChartDesktop";
 import { RecentTransactionsDesktop } from "@/components/app/desktop/RecentTransactionsDesktop";
 import { TopProductsDesktop } from "@/components/app/desktop/TopProductsDesktop";
+import { TodayNotesDesktop } from "@/components/app/desktop/TodayNotesDesktop";
 
 async function getDashboardData(tenantId: string) {
   const now = new Date();
@@ -167,7 +168,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* === DESKTOP VIEW === */}
-     <div className="hidden lg:grid grid-cols-12 gap-x-[17px] gap-y-[8px] pb-0">
+      <div className="hidden lg:grid grid-cols-12 gap-x-[17px] gap-y-[8px] pb-0">
 
         {/* Baris 1: Omzet (8 col) + Aksi Cepat (4 col) */}
         <div className="col-span-8">
@@ -185,14 +186,7 @@ export default async function DashboardPage() {
           />
         </div>
         <div className="col-span-4">
-          <div className="bg-white rounded-[10px] p-[22px] border border-[#dde1ec] h-full">
-            <div className="text-[13px] font-extrabold text-[#0b1230] mb-2 pb-3 border-b border-[#eceef4]">
-              Catatan hari ini
-            </div>
-            <div className="text-[11px] text-[#757895]">
-              Belum ada catatan.
-            </div>
-          </div>
+          <TodayNotesDesktop />
         </div>
 
         {/* Baris 3: Transaksi (8 col) + Produk Terlaris (4 col) */}

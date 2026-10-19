@@ -5,7 +5,7 @@ import { ShoppingCart, ScanBarcode, Plus } from "lucide-react";
 
 export function AksiCepatDesktop() {
   return (
-    <div className="flex flex-col min-w-0 bg-white border border-[#dde1ec] rounded-[10px] p-[22px] h-full">
+    <div className="flex flex-col min-w-0 bg-[#f8f9fc] border border-[#dde1ec] rounded-[10px] p-[22px] h-full">
       <h3 className="text-[12px] font-medium text-[#5c6483] mb-1">
         Aksi cepat
       </h3>
