@@ -43,6 +43,7 @@ model Outlet {
   alamat    String?
   telepon   String?
   createdAt DateTime @default(now())
+
   stocks Stock[]
   @@index([tenantId])
 }
@@ -52,6 +53,7 @@ model Product {
   tenantId   String
   tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id]) 
   nama       String
   sku        String?
   barcode    String?
@@ -153,4 +155,13 @@ model Shift {
   tutupAt     DateTime?
 
   @@index([outletId, bukaAt])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  tenantId  String
+  nama      String
+  createdAt DateTime @default(now())
+  
+  products  Product[]
 }

@@ -2,20 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { KasirMobile } from "@/components/app/kasir/KasirMobile";
-import { KasirDesktop } from "@/components/app/kasir/KasirDesktop";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-type Produk = { id: string; nama: string; sku: string | null; barcode: string | null; hargaJual: number; satuan: string };
-type CartItem = { productId: string; namaProduk: string; harga: number; qty: number };
-
 export default function KasirPage() {
-  const [produk, setProduk] = useState<Produk[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [produk, setProduk] = useState<any[]>([]);
+  const [kategori, setKategori] = useState<any[]>([]);
+  const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [openBayar, setOpenBayar] = useState(false);
   const [metodeBayar, setMetodeBayar] = useState("cash");
   const [nominalBayar, setNominalBayar] = useState("");
@@ -23,15 +20,20 @@ export default function KasirPage() {
 
   async function fetchProduk() {
     setLoading(true);
-    const res = await fetch("/api/produk");
-    const data = await res.json();
-    setProduk(data);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/produk");
+      const data = res.ok ? await res.json() : [];
+      setProduk(data);
+    } catch (error) {
+      setProduk([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { fetchProduk(); }, []);
 
-  function addToCart(p: Produk) {
+  function addToCart(p: any) {
     setCart((prev) => {
       const existing = prev.find((item) => item.productId === p.id);
       if (existing) return prev.map((item) => item.productId === p.id ? { ...item, qty: item.qty + 1 } : item);
@@ -70,7 +72,7 @@ export default function KasirPage() {
 
     const data = await res.json();
     if (res.ok) {
-      alert(`Transaksi berhasil!\n\nNomor: ${data.nomor}\nTotal: ${formatRupiah(data.total)}\nKembalian: ${formatRupiah(data.kembalian)}`);
+      alert(`Transaksi berhasil! Total: ${formatRupiah(data.total)}`);
       setCart([]);
       setOpenBayar(false);
       setNominalBayar("");
@@ -93,23 +95,24 @@ export default function KasirPage() {
     <div className="h-full">
       {/* Render Mobile */}
       <KasirMobile 
-        produk={produk} cart={cart} addToCart={addToCart} updateQty={updateQty} 
-        removeFromCart={removeFromCart} clearCart={clearCart} total={total} onBayar={() => setOpenBayar(true)} 
+        produk={produk} 
+        kategori={kategori}
+        cart={cart} 
+        addToCart={addToCart} 
+        updateQty={updateQty} 
+        removeFromCart={removeFromCart} 
+        clearCart={clearCart} 
+        total={total} 
+        onBayar={() => setOpenBayar(true)} 
       />
 
-      {/* Render Desktop */}
-      <KasirDesktop 
-        produk={produk} cart={cart} addToCart={addToCart} updateQty={updateQty} 
-        removeFromCart={removeFromCart} clearCart={clearCart} total={total} onBayar={() => setOpenBayar(true)} 
-      />
-
-      {/* Dialog Bayar (Sama untuk Mobile & Desktop) */}
+      {/* Dialog Bayar */}
       <Dialog open={openBayar} onOpenChange={setOpenBayar}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Pembayaran</DialogTitle>
+            <DialogTitle className="text-xl font-extrabold text-[#0b1230]">Pembayaran</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 mt-2">
             <div className="bg-[#f6f7fb] p-4 rounded-xl border border-[#dde1ec]">
               <div className="text-sm text-slate-500">Total Belanja</div>
               <div className="text-3xl font-extrabold text-[#0b1230]">{formatRupiah(total)}</div>
@@ -124,11 +127,13 @@ export default function KasirPage() {
               </select>
             </div>
             <div>
-              <Label htmlFor="nominal">Nominal Bayar *</Label>
-              <Input id="nominal" type="number" value={nominalBayar} onChange={(e) => setNominalBayar(e.target.value)} placeholder={String(total)} autoFocus className="mt-1 h-12 text-lg" />
-              <div className="flex gap-2 mt-2 flex-wrap">
-                <button type="button" onClick={() => setNominalBayar(String(total))} className="text-xs px-3 py-1.5 bg-slate-100 rounded-lg font-semibold hover:bg-slate-200">Uang Pas</button>
-                <button type="button" onClick={() => setNominalBayar(String(Math.ceil(total / 5000) * 5000))} className="text-xs px-3 py-1.5 bg-slate-100 rounded-lg font-semibold hover:bg-slate-200">Bulatkan 5rb</button>
+              <Label htmlFor="nominal">Uang Diterima *</Label>
+              <Input id="nominal" type="number" value={nominalBayar} onChange={(e) => setNominalBayar(e.target.value)} placeholder={String(total)} autoFocus className="mt-1 h-12 text-lg rounded-xl" />
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                <button type="button" onClick={() => setNominalBayar(String(Math.ceil(total / 5000) * 5000))} className="text-[10px] px-2 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">5rb</button>
+                <button type="button" onClick={() => setNominalBayar(String(Math.ceil(total / 10000) * 10000))} className="text-[10px] px-2 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">10rb</button>
+                <button type="button" onClick={() => setNominalBayar(String(Math.ceil(total / 50000) * 50000))} className="text-[10px] px-2 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">50rb</button>
+                <button type="button" onClick={() => setNominalBayar(String(Math.ceil(total / 100000) * 100000))} className="text-[10px] px-2 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">100rb</button>
               </div>
             </div>
             {nominalBayar && parseInt(nominalBayar) >= total && (
@@ -137,7 +142,7 @@ export default function KasirPage() {
                 <div className="text-xl font-bold text-[#15803d]">{formatRupiah(parseInt(nominalBayar) - total)}</div>
               </div>
             )}
-            <Button className="w-full h-12 bg-[#c2410c] hover:bg-[#a83a0a] text-white font-bold rounded-xl" onClick={handleBayar} disabled={saving || !nominalBayar || parseInt(nominalBayar) < total}>
+            <Button className="w-full h-12 bg-[#c2410c] hover:bg-[#a83a0a] text-white font-bold rounded-xl text-lg" onClick={handleBayar} disabled={saving || !nominalBayar || parseInt(nominalBayar) < total}>
               {saving ? "Memproses..." : "Bayar Sekarang"}
             </Button>
           </div>

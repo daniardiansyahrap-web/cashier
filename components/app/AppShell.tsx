@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Home,
+  LayoutDashboard,
   ShoppingCart,
   Package,
   Layers,
@@ -17,7 +17,7 @@ import { SidebarDesktop } from "./desktop/SidebarDesktop";
 import { HeaderBand } from "./desktop/HeaderBand";
 
 const MENU_ITEMS = [
-  { href: "/dashboard", label: "Beranda", icon: Home },
+  { href: "/dashboard", label: "Beranda", icon: LayoutDashboard },
   { href: "/kasir", label: "Kasir", icon: ShoppingCart },
   { href: "/transaksi", label: "Riwayat", icon: Clock },
   { href: "/produk", label: "Produk", icon: Package },
@@ -26,7 +26,7 @@ const MENU_ITEMS = [
 ];
 
 const BOTTOM_NAV_ITEMS = [
-  { href: "/dashboard", label: "Beranda", icon: Home },
+  { href: "/dashboard", label: "Beranda", icon: LayoutDashboard },
   { href: "/produk", label: "Produk", icon: Package },
   { href: "/kasir", label: "Kasir", icon: ShoppingCart, isFAB: true },
   { href: "/stok", label: "Stok", icon: Layers },
@@ -52,24 +52,46 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hideBottomNav, setHideBottomNav] = useState(false); // <--- State buat nyembunyiin Bottom Nav
 
-  const hasHeader = !!header;
+  useEffect(() => {
+    // Listener buka menu mobile (dari KasirMobile)
+    const openMenu = () => setMobileMenuOpen(true);
+    window.addEventListener("openMobileMenu", openMenu);
+
+    // Listener sembunyiin Bottom Nav (dari KasirMobile)
+    const handleToggleNav = (e: any) => {
+      setHideBottomNav(e.detail.hidden);
+    };
+    window.addEventListener("toggleBottomNav", handleToggleNav);
+
+    return () => {
+      window.removeEventListener("openMobileMenu", openMenu);
+      window.removeEventListener("toggleBottomNav", handleToggleNav);
+    };
+  }, []);
+
   const isDashboard = pathname === "/dashboard";
   const firstName = userName.split(" ")[0];
 
   return (
     <div className="flex min-h-screen bg-[#f6f7fb] text-[#0b1230] text-xs">
+      
+      {/* === DESKTOP SIDEBAR === */}
       <SidebarDesktop
         userName={userName}
         userRole={userRole}
         trialDaysLeft={trialDaysLeft}
       />
 
-      <main className={`min-w-0 flex-1 pb-28 ${isDashboard ? "lg:pb-0" : "lg:pb-8"}`}>
-        {!hasHeader && (
-          <header className="lg:hidden bg-cx-hero text-white px-[18px] pt-4 pb-3" />
-        )}
-
+      {/* === MAIN AREA === */}
+      <main className={`min-w-0 flex-1 bg-[#f6f7fb] ${
+        pathname === "/kasir"
+          ? "h-dvh overflow-hidden pb-0 lg:h-auto lg:overflow-visible lg:pb-8"
+          : "pb-28 lg:pb-8"
+      }`}>
+        
+        {/* === DESKTOP HEADER BAND (Khusus Dashboard Desktop) === */}
         {isDashboard && (
           <HeaderBand
             userName={userName}
@@ -79,9 +101,10 @@ export function AppShell({
           />
         )}
 
-        <div className="lg:hidden relative">
-          {header}
-          {hasHeader && (
+        {/* === MOBILE HEADER (Hanya di Beranda) === */}
+        {isDashboard && (
+          <div className="lg:hidden relative">
+            {header}
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="fixed top-5 right-4 z-[100] size-9 rounded-xl bg-white/15 backdrop-blur-md grid place-items-center text-white border border-white/10"
@@ -89,19 +112,22 @@ export function AppShell({
             >
               <Menu className="size-5" strokeWidth={2} />
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* KONTEN: Full width di mobile, max-w di desktop */}
-          <div
-            className={`w-full lg:mx-auto lg:max-w-[1320px] lg:px-7 ${
-              isDashboard ? "lg:-mt-10 pb-10 lg:pb-0" : "py-6"
-            } relative z-[1]`}
-          >
+        {/* === KONTEN === */}
+        <div
+          className={`w-full lg:mx-auto lg:max-w-[1320px] lg:px-7 ${
+            pathname === "/kasir"
+              ? "h-full"
+              : isDashboard ? "lg:-mt-10 pb-10" : "pt-0 pb-0"
+          } relative z-[1]`}
+        >
           {children}
         </div>
       </main>
 
+      {/* === MOBILE DRAWER (Menu Samping) === */}
       {mobileMenuOpen && (
         <>
           <div
@@ -160,58 +186,61 @@ export function AppShell({
         </>
       )}
 
-      <nav className="lg:hidden fixed inset-x-0 bottom-0 bg-white border-t border-cx-line z-[80]">
-        <div className="grid grid-cols-5 max-w-lg mx-auto pt-2 pb-[max(8px,env(safe-area-inset-bottom))]">
-          {BOTTOM_NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
+      {/* === MOBILE BOTTOM NAV (Auto-Hide) === */}
+      {!hideBottomNav && (
+        <nav className="lg:hidden fixed inset-x-0 bottom-0 bg-white border-t border-cx-line z-[80] animate-in slide-in-from-bottom-full duration-200">
+          <div className="grid grid-cols-5 max-w-lg mx-auto pt-2 pb-[max(8px,env(safe-area-inset-bottom))]">
+            {BOTTOM_NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
 
-            if (item.isFAB) {
+              if (item.isFAB) {
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex flex-col items-center gap-1 -mt-6"
+                  >
+                    <div className="size-[52px] rounded-[18px] bg-cx-cta shadow-cx-fab grid place-items-center active:scale-[0.95] transition-transform">
+                      <Icon className="size-6 text-white" strokeWidth={2} />
+                    </div>
+                    <span
+                      className={`text-[10.5px] font-semibold ${
+                        isActive ? "text-cx-orange-d" : "text-slate-400"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              }
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex flex-col items-center gap-1 -mt-6"
+                  aria-current={isActive ? "page" : undefined}
+                  className="flex flex-col items-center gap-1 py-2"
                 >
-                  <div className="size-[52px] rounded-[18px] bg-cx-cta shadow-cx-fab grid place-items-center active:scale-[0.95] transition-transform">
-                    <Icon className="size-6 text-white" strokeWidth={2} />
-                  </div>
+                  <Icon
+                    className={`size-5 ${
+                      isActive ? "text-cx-blue" : "text-slate-400"
+                    }`}
+                    strokeWidth={1.9}
+                  />
                   <span
                     className={`text-[10.5px] font-semibold ${
-                      isActive ? "text-cx-orange-d" : "text-slate-400"
+                      isActive ? "text-cx-blue" : "text-slate-400"
                     }`}
                   >
                     {item.label}
                   </span>
                 </Link>
               );
-            }
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={isActive ? "page" : undefined}
-                className="flex flex-col items-center gap-1 py-2"
-              >
-                <Icon
-                  className={`size-5 ${
-                    isActive ? "text-cx-blue" : "text-slate-400"
-                  }`}
-                  strokeWidth={1.9}
-                />
-                <span
-                  className={`text-[10.5px] font-semibold ${
-                    isActive ? "text-cx-blue" : "text-slate-400"
-                  }`}
-                >
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+            })}
+          </div>
+        </nav>
+      )}
     </div>
   );
 }

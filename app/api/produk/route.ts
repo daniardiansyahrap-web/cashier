@@ -3,18 +3,29 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// GET /api/produk — Ambil semua produk milik tenant user
 export async function GET() {
   const session = await getServerSession(authOptions);
-
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const tenantId = (session.user as any).tenantId;
 
+  // 1. Cari tahu dulu outlet mana yang aktif
+  const outlet = await prisma.outlet.findFirst({
+    where: { tenantId },
+  });
+
+  // 2. Ambil produk + sekalian tarik data stok dari outlet tersebut
   const produk = await prisma.product.findMany({
     where: { tenantId, active: true },
+    include: {
+      stocks: outlet
+        ? {
+            where: { outletId: outlet.id },
+          }
+        : false, // Kalau gak ada outlet, jangan tarik stok
+    },
     orderBy: { createdAt: "desc" },
   });
 
